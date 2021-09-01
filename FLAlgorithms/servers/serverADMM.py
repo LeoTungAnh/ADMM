@@ -18,7 +18,6 @@ class ADMM(Server2):
         self.experiment = experiment
         #oriDim = getDimention(0,dataset[0], dataset[1])
         total_users = len(dataset[0][0])
-        print("total users: ", total_users)
         for i in range(total_users):            
             id, train , test = read_user_data(i, dataset[0], dataset[1])
             #train = train# - torch.mean(train, 1)).T
@@ -27,10 +26,6 @@ class ADMM(Server2):
                 U, S, V = torch.svd(train)
                 V = V[:, :dim]
                 self.commonPCAz = V
-                print("type of V", type(V))
-                print("shape of V: ", V.shape)
-                # self.commonPCAz = torch.rand_like(V, dtype=torch.float)
-                # print(self.commonPCAz)
                 check = torch.matmul(V.T,V)
 
             #user = UserADMM(device, id, train, test, self.commonPCAz, learning_rate, ro, local_epochs, dim)
@@ -59,8 +54,6 @@ class ADMM(Server2):
                 user.train(self.local_epochs)
 
             self.aggregate_pca()
-        Z = self.commonPCAz.detach().numpy()
-        np.save('Grassmann_ADMM_3components', Z)
-        print("Completed training!!!")
-        # self.save_results()
-        # self.save_model()
+            
+        self.save_results()
+        self.save_model()
